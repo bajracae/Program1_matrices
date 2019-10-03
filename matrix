@@ -1,4 +1,54 @@
 #!/bin/bash
 
+dims() {
+	echo arg = $1		
+}
+
+transpose() {
+	echo "tranpose"
+}
+
+mean() {
+	echo "mean"
+}
+
+add() {
+	echo "add"
+}
+
+multipy() {
+	echo "multiply"
+}
 
 
+datafilepath="datafile$$"
+if [ "$#" = "0" ]
+then 
+	echo "Error, no arguments were passed" 1>&2
+	exit 1
+elif [ $1 = "add" ] || [ $1 = "multiply" ]
+then
+	if [ $# = "3" ]
+	then
+		$1 $2 $3
+	else
+		echo "Error" 1>&2
+		exit 1
+	fi
+elif [ $1 = "dims" ] || [ $1 = "transpose" ] || [ $1 = "mean" ]
+then
+	if [ $# = "2" ]
+	then
+		$1 $2
+	elif [ $# = "1" ]
+	then
+		cat > "$datafilepath"
+		$1 "$datafilepath"
+	else
+		echo "Error" 1>&2
+		exit 1
+	fi
+else
+	echo "Error, function does not exist: $1" 1>&2
+	exit 1
+fi	
