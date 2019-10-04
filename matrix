@@ -5,13 +5,13 @@ dims() {
 	then
 		echo "Error" 1>&2
 		exit 1
-	elif [ $# = "1" ] && [ ! -r $1 ]
+	elif [ $# = "1" ] && [ ! -r $2 ]
 	then
 		echo "Error" 1>&2
 		exit 1
 	else
-		cols=$(< "$1": wc -l)
-		
+		cols=`wc -l $2`
+		echo cols
 	fi		 		
 }
 
