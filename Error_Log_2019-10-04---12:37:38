@@ -1,0 +1,24 @@
+Piping m1 (5x6) into dims (3pt):
+[91m- dimensions output is incorrect[0m
+6 6
+First matrix stored in m1.1
+Piping m2 (6x7) into dims (3pt):
+[91m- dimensions output is incorrect[0m
+7 7
+First matrix stored in m2.1
+Piping m3 (3x8) into dims (3pt):
+[91m- dimensions output is incorrect[0m
+4 8
+First matrix stored in m3.1
+Passing m4 (8x5) to dims on stdin (3pt):
+[91m- dimensions output is incorrect[0m
+9 5
+First matrix stored in m4.1
+Passing m1 (5x6) to dims on stdin (3pt):
+[91m- dimensions output is incorrect[0m
+6 6
+First matrix stored in m5.1
+Passing m2 (6x7) to dims on stdin (3pt):
+[91m- dimensions output is incorrect[0m
+7 7
+First matrix stored in m6.1

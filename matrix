@@ -4,46 +4,65 @@ dims() {
 	if [ $# -gt "1" ]
 	then
 		echo "Error" 1>&2
-		exit 1
+		return 1
 	elif [ $# = "1" ] && [ ! -r $2 ]
 	then
 		echo "Error" 1>&2
-		exit 1
+		return 1
 	else
 		rows=$(wc -l $1)
-		echo $rows | cut -f 1 -d " " # cut cuts the first field (-f 1) from a list of fields delimited by the string " " (-d)
 		firstline=$(head -n 1 $1)
-		# count=1
-		# for i in $firstline
-		# do
-		# 	echo "stop 1"
-		# 	if [ "$i" = "\t" ]
-		# 	then
-		# 		echo "stop 2"
-		# 		$count=$(count+1)
-		# 	fi
-		# done
-		# echo $count
-		cols=$(echo $firstline | wc -w )
-		echo $cols
+		cols=$(echo $firstline | wc -w ) # counts the number of words in the first line
+		rows=$(echo $rows | cut -f 1 -d " ")  # cut cuts the first field (-f 1) from a list of fields delimited by the string " " (-d)
+		printf "$rows $cols\n"
 		return 0
 	fi		 		
 }
 
 transpose() {
-	echo "tranpose"
+	dimension=$(cat dims $1)
+	rows=$(cut -f 1 -d " ")
+	cols=$(cut -f 2 -d " ")
+	echo $rows
+	if [ $# -gt "1" ]
+	then
+		echo "Error" 1>&2
+		return 1
+	elif [ $# = "1" ] && [ ! -r $2 ]
+	then
+		echo "Error" 1>&2
+		return 1
+	else
+		# for 
+		# do
+		# 	cols=$(cut -f $1)
+		# 	echo $cols
+		# done
+		echo hello
+	fi
 }
 
 mean() {
-	echo "mean"
-	sum=0
-	for i in $2
-	do
-		echo $i
-	done
+	if [ $# -gt "1" ]
+	then
+		echo "Error 1" 1>&2
+		return 1
+	elif [ $# = "1" ] && [ ! -r $2 ]
+	then
+		echo "Error 2" 1>&2
+		return 1
+	else
+		sum=0
+		for i in $1
+		do
+			echo hellow
+		done
+		return 0
+	fi
 }
 
 add() {
+	
 	echo "add"
 }
 
