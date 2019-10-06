@@ -1,13 +1,13 @@
-#!/bin/bash
+#!/bin/bash -e
 
 dims() {
 	if [ $# -gt "1" ]
 	then
 		echo "Error" 1>&2
 		return 1
-	elif [ $# = "1" ] && [ ! -r $2 ]
+	elif [ $# = "1" ] && [ ! -r $1 ]
 	then
-		echo "Error" 1>&2
+		echo "Error, file is unreadable" 1>&2
 		return 1
 	else
 		rows=$(wc -l $1)
@@ -20,25 +20,28 @@ dims() {
 }
 
 transpose() {
-	dimension=$(cat dims $1)
-	rows=$(cut -f 1 -d " ")
-	cols=$(cut -f 2 -d " ")
-	echo $rows
+	firstline=$(head -n 1 $1)
+	cols=$(echo $firstline | wc -w )
+	
 	if [ $# -gt "1" ]
 	then
 		echo "Error" 1>&2
 		return 1
-	elif [ $# = "1" ] && [ ! -r $2 ]
+	elif [ $# = "1" ] && [ ! -r $1 ]
 	then
-		echo "Error" 1>&2
+		echo "Error, file is unreadable" 1>&2
 		return 1
 	else
-		# for 
-		# do
-		# 	cols=$(cut -f $1)
-		# 	echo $cols
-		# done
-		echo hello
+		for((i = 1; i <= $cols; i++))
+		do
+			eachcol=$(cut -f $i $1)
+			echo $eachcol 
+			# What to do:
+			# for i in each cols
+			# printf i \t
+			# %? - remove the last characater
+		done
+		return 0
 	fi
 }
 
@@ -47,9 +50,9 @@ mean() {
 	then
 		echo "Error 1" 1>&2
 		return 1
-	elif [ $# = "1" ] && [ ! -r $2 ]
+	elif [ $# = "1" ] && [ ! -r $1 ]
 	then
-		echo "Error 2" 1>&2
+		echo "Error, file is unreadable" 1>&2
 		return 1
 	else
 		sum=0
