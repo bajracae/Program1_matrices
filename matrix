@@ -19,10 +19,13 @@ dims() {
 	fi		 		
 }
 
-transpose() {
+#ERROR WITH MATRICES WITH ONE COLUMN ONLY
+transpose() { 
 	firstline=$(head -n 1 $1)
 	cols=$(echo $firstline | wc -w )
-	
+	rows=$(wc -l $1)
+	rows=$(echo $rows | cut -f 1 -d " ")
+	echo "number of rows: $rows"
 	if [ $# -gt "1" ]
 	then
 		echo "Error" 1>&2
@@ -34,18 +37,29 @@ transpose() {
 	else
 		for((i = 1; i <= $cols; i++))
 		do
-			eachcol=$(cut -f $i $1)
-			echo $eachcol 
-			# What to do:
-			# for i in each cols
-			# printf i \t
-			# %? - remove the last characater
+			eachcol=$(cut -d '	' -f $i $1)
+			# printf $eachcol
+			for j in $eachcol
+			do
+				if [ $j -eq $rows ]
+				then
+			 		printf "%d\n" $j
+				else
+					printf "%d\t" $j
+				fi
+			done
+			printf "\n"
 		done
 		return 0
 	fi
 }
 
 mean() {
+	rows=$(wc -l $1)
+	rows=$(echo $rows | cut -f 1 -d " ")  # cut cuts the first field (-f 1) from a list of fields delimited by the string " " (-d)
+	firstline=$(head -n 1 $1)
+	cols=$(echo $firstline | wc -w )
+	
 	if [ $# -gt "1" ]
 	then
 		echo "Error 1" 1>&2
@@ -56,9 +70,14 @@ mean() {
 		return 1
 	else
 		sum=0
-		for i in $1
+		for((i = 1; i <= $cols; i++))
 		do
-			echo hellow
+			eachcol=$(cut -f $i $1)
+			for((j = 1; j <= $rows; j++))
+			do
+				sum=$((sum + j))	
+			done
+			printf "$((sum))"
 		done
 		return 0
 	fi
