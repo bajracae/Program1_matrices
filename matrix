@@ -73,9 +73,17 @@ mean() {
 			eachcol=$(cut -f $i $1)
 			for((j = 1; j <= $rows; j++))
 			do
-				sum=$((sum + j))	
-			done
-			printf "$((sum))"
+				read num
+				sum=$((sum+$num))
+			done <<< "$eachcol"
+			sum=$(( ($sum + ($rows/2)*( ($sum>0)*2-1))/$rows ))
+			if [ $i = $cols ]
+			then
+				printf "%d\n" $sum
+			else
+				printf "%d\t" $sum
+			fi
+			sum=0
 		done
 		return 0
 	fi
