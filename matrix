@@ -19,13 +19,11 @@ dims() {
 	fi		 		
 }
 
-#ERROR WITH MATRICES WITH ONE COLUMN ONLY
 transpose() { 
 	firstline=$(head -n 1 $1)
 	cols=$(echo $firstline | wc -w )
 	rows=$(wc -l $1)
 	rows=$(echo $rows | cut -f 1 -d " ")
-	echo "number of rows: $rows"
 	if [ $# -gt "1" ]
 	then
 		echo "Error" 1>&2
@@ -37,17 +35,17 @@ transpose() {
 	else
 		for((i = 1; i <= $cols; i++))
 		do
-			eachcol=$(cut -d '	' -f $i $1)
-			# printf $eachcol
-			for j in $eachcol
+			eachcol=$(cut -f $i $1)
+			for((j = 1; j <= $rows; j++))
 			do
-				if [ $j -eq $rows ]
+				read num
+				if [ $j = $rows ]
 				then
-			 		printf "%d\n" $j
+					printf "%d" $num
 				else
-					printf "%d\t" $j
+					printf "%d\t" $num
 				fi
-			done
+			done <<< "$eachcol"
 			printf "\n"
 		done
 		return 0
