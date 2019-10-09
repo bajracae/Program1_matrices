@@ -92,41 +92,120 @@ mean() {
 add() {
 	rowsm1=$(wc -l $1)
 	rowsm1=$(echo $rowsm1 | cut -f 1 -d " ")  # cut cuts the first field (-f 1) from a list of fields delimited by the string " " (-d)
+	#echo "This is m1 rows: $rowsm1"
 
 	firstlinem1=$(head -n 1 $1)
-	colsm1=$(echo $firstline | wc -w )
+	colsm1=$(echo $firstlinem1 | wc -w )
+	#echo "This is m1 cols: $colsm1"
 
 	rowsm2=$(wc -l $2)
 	rowsm2=$(echo $rowsm2 | cut -f 1 -d " ")  # cut cuts the first field (-f 1) from a list of fields delimited by the string " " (-d)
+	#echo "This is m2 rows: $rowsm2"
+
 
 	firstlinem2=$(head -n 1 $2)
 	colsm2=$(echo $firstlinem2 | wc -w )
+	#echo "This is m2 cols: $colsm1"
+
 
 	if [ $# != "2" ]
 	then
 		echo "Error 1" 1>&2
 		return 1
-	elif [ $# = "2"] && [ ! -r $1 ]
+	elif [[ $# = "2" && ( ! -r $1 || ! -r $2 ) ]]
 	then
 		echo "Error, file is unreadable" 1>&2
 		return 1	
-	elif [ $rowsm1 != $rowsm2 ] || [ $colm1 != $colm2 ]
+	elif [ $rowsm1 -ne $rowsm2 ] || [ $colsm1 -ne $colsm2 ]
 	then
 		echo "Error, matrices are not the same size!" 1>&2
 		return 1
 	else
-		for((i = 1; i <= $colsm1; i++))
+		numm1=0
+		numm2=0
+		sum=0
+		paste -d '\n' $1 $2 | while read f1 && read f2
 		do
-			m1col=$(cut -f $i $1)
-			m2col=$(cut -f $i $2)
-
+			#echo "f1: $f1"
+			#echo "f2: $f2"
+			for((i = 1; i <= $colsm1; i++))
+			do
+				numm1=$(echo "$f1" | cut -f $i)
+				#echo "numm1: $numm1"
+				numm2=$(echo "$f2" | cut -f $i)
+				#echo "numm2: $numm2"
+				sum=$(($numm1+$numm2))
+				if [ $i = $colsm1 ]
+				then
+					printf "%d" $sum
+				else
+					printf "%d\t" $sum
+				fi 	
+			done
+			printf "\n"
+			numm1=0
+			numm2=0
+			sum=0
 		done
-		return 0	
+		return 0
 	fi
 }
 
-multipy() {
-	echo "multiply"
+multiply() {
+	rowsm1=$(wc -l $1)
+	rowsm1=$(echo $rowsm1 | cut -f 1 -d " ")  # cut cuts the first field (-f 1) from a list of fields delimited by the string " " (-d)
+	#echo "This is m1 rows: $rowsm1"
+
+	firstlinem1=$(head -n 1 $1)
+	colsm1=$(echo $firstlinem1 | wc -w )
+	#echo "This is m1 cols: $colsm1"
+
+	rowsm2=$(wc -l $2)
+	rowsm2=$(echo $rowsm2 | cut -f 1 -d " ")  # cut cuts the first field (-f 1) from a list of fields delimited by the string " " (-d)
+	#echo "This is m2 rows: $rowsm2"
+
+
+	firstlinem2=$(head -n 1 $2)
+	colsm2=$(echo $firstlinem2 | wc -w )
+	#echo "This is m2 cols: $colsm1"
+
+	if [ $# != "2" ]
+	then 
+		echo "Error 1" 1>&2
+		return 1
+	elif [[ $# = "2" && ( ! -r $1 || ! -r $2 ) ]]
+	then
+		echo "Error, file is unreadable" 1>&2
+		return 1		 	
+	elif [ $colsm1 != $rowsm2 ]
+	then
+		echo "Error, the column of the first matrix is not equal to the row of the second matrix." 1>&2
+		return 1
+	else 
+		numm1=0
+		numm2=0
+		multiply=0
+		paste -d '\n' $1 | while read f1 # reads in each row of m1, $f1 is the first row of m1
+		do
+			echo $f1
+			for((i = 1; i <= $colsm1; i++)) #iterate through each element of the row	
+			do
+				numm1=$(echo "$f1" | cut -f $ i)
+				for((j = 1; j <= $rowsm2; j++)) #iterate through each element in the m2 column
+				do
+					eachcol=$(cut -f $j $2)
+					if [ $i = $j ]
+					then
+						multiply=$((numm1 * eachcol))
+					else
+						echo "hellow"
+					fi
+					echo "multiply: $multiply"
+				done
+			done
+		done
+		return 0
+	fi
 }
 
 

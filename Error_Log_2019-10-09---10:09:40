@@ -1,0 +1,5 @@
+0 + 0 == 0? (2pt):
+X + 0 == X? (5pt):
+0 + X == X? (5pt):
+A + B == B + A? (1pt):
+(harcoded) A + B == C? (15pt):
