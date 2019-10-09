@@ -90,8 +90,39 @@ mean() {
 }
 
 add() {
-	
-	echo "add"
+	rowsm1=$(wc -l $1)
+	rowsm1=$(echo $rowsm1 | cut -f 1 -d " ")  # cut cuts the first field (-f 1) from a list of fields delimited by the string " " (-d)
+
+	firstlinem1=$(head -n 1 $1)
+	colsm1=$(echo $firstline | wc -w )
+
+	rowsm2=$(wc -l $2)
+	rowsm2=$(echo $rowsm2 | cut -f 1 -d " ")  # cut cuts the first field (-f 1) from a list of fields delimited by the string " " (-d)
+
+	firstlinem2=$(head -n 1 $2)
+	colsm2=$(echo $firstlinem2 | wc -w )
+
+	if [ $# != "2" ]
+	then
+		echo "Error 1" 1>&2
+		return 1
+	elif [ $# = "2"] && [ ! -r $1 ]
+	then
+		echo "Error, file is unreadable" 1>&2
+		return 1	
+	elif [ $rowsm1 != $rowsm2 ] || [ $colm1 != $colm2 ]
+	then
+		echo "Error, matrices are not the same size!" 1>&2
+		return 1
+	else
+		for((i = 1; i <= $colsm1; i++))
+		do
+			m1col=$(cut -f $i $1)
+			m2col=$(cut -f $i $2)
+
+		done
+		return 0	
+	fi
 }
 
 multipy() {
