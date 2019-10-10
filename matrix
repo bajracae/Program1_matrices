@@ -185,25 +185,43 @@ multiply() {
 		numm1=0
 		numm2=0
 		multiply=0
-		paste -d '\n' $1 | while read f1 # reads in each row of m1, $f1 is the first row of m1
+		#paste -d '\n' $1 | while read f1 # reads in each row of m1, $f1 is the first row of m1
+		#do
+		#	echo "f1: $f1"
+		#	for((i = 1; i <= $colsm1; i++)) #iterate through each element of the row	
+		#	do
+		#		numm1=$(echo "$f1" | cut -f $i)
+		#		echo "numm1: $numm1"
+		#		for((j = 1; j <= $colsm2; j++)) #iterate through each element in the m2 column
+		#		do
+		#			eachcol=$(cut -f $j $2)
+		#			for((k = 1; k <= $rowsm2; k++))
+		#			do
+		#				read num
+		#				if [ $i = $j ]
+		#				then
+		#					multiply=$(($numm1*$num))
+		#				fi
+		#			done <<< "$eachcol"
+
+					#echo "eachcol: $eachcol"
+					#if [ $i = $j ]
+					#then
+					#	multiply=$((numm1 * eachcol))
+					#else
+					#	echo "hello"
+					#fi
+					#echo "multiply: $multiply"
+		#		done
+		#		echo "mult: $multiply"
+		#	done
+		#done
+		tm2=$(transpose $2)
+
+		while read -u 3 left && read -u 4 right
 		do
-			echo $f1
-			for((i = 1; i <= $colsm1; i++)) #iterate through each element of the row	
-			do
-				numm1=$(echo "$f1" | cut -f $ i)
-				for((j = 1; j <= $rowsm2; j++)) #iterate through each element in the m2 column
-				do
-					eachcol=$(cut -f $j $2)
-					if [ $i = $j ]
-					then
-						multiply=$((numm1 * eachcol))
-					else
-						echo "hellow"
-					fi
-					echo "multiply: $multiply"
-				done
-			done
-		done
+			echo h	
+		done 3<"$1" 4<"$2"
 		return 0
 	fi
 }
