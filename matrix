@@ -202,17 +202,13 @@ multiply() {
 						m2val=$(echo "$right" | cut -f $j)
 						if [ $i = $j ]
 						then
-							#echo "m2val: $m2val"
-							multiply=$(($m1val*$m2val))
-							#echo "multiply: $multiply"	
+							multiply=$(($m1val*$m2val))	
 						fi
 					done	
 					sum=$(($sum+$multiply))
-					#echo "sum: $sum"
 				done
 				counter=$((counter+1))
-				#echo "counter: $counter"
-				if [ $counter = $colsm1 ]
+				if [ $counter = $colsm2 ]
 				then
 					printf "%d" $sum
 				else
