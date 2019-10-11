@@ -186,54 +186,29 @@ multiply() {
 		numm2=0
 		multiply=0
 		sum=0
-		counter=1
+		counter=0
 		transpose $2 > "tempfile3"
-				
-		#while read -u 3 left && read -u 4 right
-		#do
-		#	for((i = 1; i <= $colsm1; i++))
-		#	do
-		#		m1val=$(echo "$left" | cut -f $i)
-		#		for((j = 1; j <= $colsm1; j++))
-		#		do
-		#			m2val=$(echo "$right" | cut -f $j)
-		#			if [ $i = $j ]
-		#			then
-		#				multiply=$((m1val*m2val))	
-		#			fi
-					#printf "%d\n" $multiply
-		#		done
-				#printf "%d\n" $multiply
-				#multiply=0
-				#sum=0
-		#		sum=$(($sum+multiply))
-		#	done
-		#	echo $sum
-		#	multiply=0
-		#	sum=0
-		#done 3<"$1" 4<"tempfile3"
-		#return 0
 
 		while read -u 3 left
 		do
-			#echo "left: $left"
 			while read -u 4 right
 			do
-				#echo "right: $right"
 				for((i = 1; i <= $colsm1; i++))
 				do
 					m1val=$(echo "$left" | cut -f $i)
+					#echo "m1val: $m1val"
 					for((j = 1; j <= $colsm1; j++))
 					do
 						m2val=$(echo "$right" | cut -f $j)
 						if [ $i = $j ]
 						then
-							multiply=$((m1val*m2val))	
+							#echo "m2val: $m2val"
+							multiply=$(($m1val*$m2val))
+							#echo "multiply: $multiply"	
 						fi
-					done
-					sum=$(($sum+multiply))
-					#counter=$((counter+1))
-					#echo "counter: $counter"
+					done	
+					sum=$(($sum+$multiply))
+					#echo "sum: $sum"
 				done
 				counter=$((counter+1))
 				#echo "counter: $counter"
@@ -247,7 +222,7 @@ multiply() {
 				sum=0
 			done 4<"tempfile3"
 			printf "\n"
-			counter=1
+			counter=0
 		done 3<"$1"
 	fi
 }
