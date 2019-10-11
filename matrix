@@ -185,44 +185,70 @@ multiply() {
 		numm1=0
 		numm2=0
 		multiply=0
-		#paste -d '\n' $1 | while read f1 # reads in each row of m1, $f1 is the first row of m1
-		#do
-		#	echo "f1: $f1"
-		#	for((i = 1; i <= $colsm1; i++)) #iterate through each element of the row	
-		#	do
-		#		numm1=$(echo "$f1" | cut -f $i)
-		#		echo "numm1: $numm1"
-		#		for((j = 1; j <= $colsm2; j++)) #iterate through each element in the m2 column
-		#		do
-		#			eachcol=$(cut -f $j $2)
-		#			for((k = 1; k <= $rowsm2; k++))
-		#			do
-		#				read num
-		#				if [ $i = $j ]
-		#				then
-		#					multiply=$(($numm1*$num))
-		#				fi
-		#			done <<< "$eachcol"
-
-					#echo "eachcol: $eachcol"
-					#if [ $i = $j ]
-					#then
-					#	multiply=$((numm1 * eachcol))
-					#else
-					#	echo "hello"
-					#fi
-					#echo "multiply: $multiply"
-		#		done
-		#		echo "mult: $multiply"
-		#	done
-		#done
+		sum=0
+		counter=1
 		transpose $2 > "tempfile3"
 				
-		while read -u 3 left && read -u 4 right
+		#while read -u 3 left && read -u 4 right
+		#do
+		#	for((i = 1; i <= $colsm1; i++))
+		#	do
+		#		m1val=$(echo "$left" | cut -f $i)
+		#		for((j = 1; j <= $colsm1; j++))
+		#		do
+		#			m2val=$(echo "$right" | cut -f $j)
+		#			if [ $i = $j ]
+		#			then
+		#				multiply=$((m1val*m2val))	
+		#			fi
+					#printf "%d\n" $multiply
+		#		done
+				#printf "%d\n" $multiply
+				#multiply=0
+				#sum=0
+		#		sum=$(($sum+multiply))
+		#	done
+		#	echo $sum
+		#	multiply=0
+		#	sum=0
+		#done 3<"$1" 4<"tempfile3"
+		#return 0
+
+		while read -u 3 left
 		do
-			
-		done 3<"$1" 4<"tempfile3"
-		return 0
+			#echo "left: $left"
+			while read -u 4 right
+			do
+				#echo "right: $right"
+				for((i = 1; i <= $colsm1; i++))
+				do
+					m1val=$(echo "$left" | cut -f $i)
+					for((j = 1; j <= $colsm1; j++))
+					do
+						m2val=$(echo "$right" | cut -f $j)
+						if [ $i = $j ]
+						then
+							multiply=$((m1val*m2val))	
+						fi
+					done
+					sum=$(($sum+multiply))
+					#counter=$((counter+1))
+					#echo "counter: $counter"
+				done
+				counter=$((counter+1))
+				#echo "counter: $counter"
+				if [ $counter = $colsm1 ]
+				then
+					printf "%d" $sum
+				else
+					printf "%d\t" $sum
+				fi
+				multiply=0
+				sum=0
+			done 4<"tempfile3"
+			printf "\n"
+			counter=1
+		done 3<"$1"
 	fi
 }
 
