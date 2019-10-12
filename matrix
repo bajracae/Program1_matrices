@@ -21,18 +21,19 @@
 dims() {
 	if [ $# -gt "1" ] # Prints an error if there is more than 1 parameter
 	then
-		echo "Error" 1>&2
+		echo "Error, too many arguments" 1>&2
 		return 1
 	elif [ $# = "1" ] && [ ! -r $1 ] # Prints an error if the passed in file is unreadable
 	then
 		echo "Error, file is unreadable" 1>&2
 		return 1
 	else
+		rows=$(wc -l $1) # Returns the number of lines in the file with the name of the file
+		rows=$(echo $rows | cut -f 1 -d " ")  # Removes the name of the file
+
 		firstline=$(head -n 1 $1) # Takes the first row of the matrix
 		cols=$(echo $firstline | wc -w ) # Counts the number of fields in the first row
-		rows=$(wc -l $1) # Returns the number of lines in the file
-		echo $rows
-		rows=$(echo $rows | cut -f 1 -d " ")  # cuts the first field (-f 1) from a list of fields delimited by the string " " (-d)
+
 		printf "$rows $cols\n"
 		return 0
 	fi		 		
@@ -49,26 +50,30 @@ dims() {
 ## Post-Conditions: Prints the transposed matrix to the terminal
 ###############################################################
 transpose() { 
-	firstline=$(head -n 1 $1)
-	cols=$(echo $firstline | wc -w )
+	# Finds the row size 
 	rows=$(wc -l $1)
 	rows=$(echo $rows | cut -f 1 -d " ")
-	if [ $# -gt "1" ]
+
+	# Finds the column size of the matrix
+	firstline=$(head -n 1 $1)
+	cols=$(echo $firstline | wc -w )
+
+	if [ $# -gt "1" ] # Prints an error if there is more than 1 parameter
 	then
-		echo "Error" 1>&2
+		echo "Error, too many arguments" 1>&2
 		return 1
-	elif [ $# = "1" ] && [ ! -r $1 ]
+	elif [ $# = "1" ] && [ ! -r $1 ] # Prints an error if the passed in file is unreadable
 	then
 		echo "Error, file is unreadable" 1>&2
 		return 1
 	else
-		for((i = 1; i <= $cols; i++))
+		for((i = 1; i <= $cols; i++)) # Loop to iterate through each column
 		do
-			eachcol=$(cut -f $i $1)
-			for((j = 1; j <= $rows; j++))
+			eachcol=$(cut -f $i $1) # Stores each column in a variable
+			for((j = 1; j <= $rows; j++)) # Loop to iterate through the column
 			do
-				read num
-				if [ $j = $rows ]
+				read num # Reads in each number in the column 
+				if [ $j = $rows ] # Print the last number of the column without a tab
 				then
 					printf "%d" $num
 				else
@@ -91,31 +96,34 @@ transpose() {
 ## Post-Conditions: Prints the averages to the terminal
 ###############################################################
 mean() {
+	# Finds the row size 
 	rows=$(wc -l $1)
-	rows=$(echo $rows | cut -f 1 -d " ")  # cut cuts the first field (-f 1) from a list of fields delimited by the string " " (-d)
+	rows=$(echo $rows | cut -f 1 -d " ")
+
+	# Finds the column size of the matrix
 	firstline=$(head -n 1 $1)
 	cols=$(echo $firstline | wc -w )
 	
-	if [ $# -gt "1" ]
+	if [ $# -gt "1" ] # Prints an error if there is more than 1 parameter
 	then
-		echo "Error 1" 1>&2
+		echo "Error, too many arguments" 1>&2
 		return 1
-	elif [ $# = "1" ] && [ ! -r $1 ]
+	elif [ $# = "1" ] && [ ! -r $1 ] # Prints an error if the passed in file is unreadable
 	then
 		echo "Error, file is unreadable" 1>&2
 		return 1
 	else
 		sum=0
-		for((i = 1; i <= $cols; i++))
+		for((i = 1; i <= $cols; i++)) # Loop to iterate through each column
 		do
-			eachcol=$(cut -f $i $1)
-			for((j = 1; j <= $rows; j++))
+			eachcol=$(cut -f $i $1) # Stores each column in a variable
+			for((j = 1; j <= $rows; j++)) # Loop to iterate through the column
 			do
-				read num
-				sum=$((sum+$num))
+				read num # Reads in each number in the column
+				sum=$((sum+$num)) 
 			done <<< "$eachcol"
-			sum=$(( ($sum + ($rows/2)*( ($sum>0)*2-1))/$rows ))
-			if [ $i = $cols ]
+			sum=$(( ($sum + ($rows/2)*( ($sum>0)*2-1))/$rows )) # Rounds the average
+			if [ $i = $cols ] # Print a newline after the last number
 			then
 				printf "%d\n" $sum
 			else
@@ -136,52 +144,46 @@ mean() {
 ##		    the result matrix to the terminal
 ###############################################################
 add() {
+	# Finds the row and column size of the first matrix
 	rowsm1=$(wc -l $1)
-	rowsm1=$(echo $rowsm1 | cut -f 1 -d " ")  # cut cuts the first field (-f 1) from a list of fields delimited by the string " " (-d)
-	#echo "This is m1 rows: $rowsm1"
+	rowsm1=$(echo $rowsm1 | cut -f 1 -d " ")
 
 	firstlinem1=$(head -n 1 $1)
 	colsm1=$(echo $firstlinem1 | wc -w )
-	#echo "This is m1 cols: $colsm1"
 
+	# Finds the row and column size of the second matrix
 	rowsm2=$(wc -l $2)
-	rowsm2=$(echo $rowsm2 | cut -f 1 -d " ")  # cut cuts the first field (-f 1) from a list of fields delimited by the string " " (-d)
-	#echo "This is m2 rows: $rowsm2"
-
-
+	rowsm2=$(echo $rowsm2 | cut -f 1 -d " ") 
+	 
 	firstlinem2=$(head -n 1 $2)
 	colsm2=$(echo $firstlinem2 | wc -w )
-	#echo "This is m2 cols: $colsm1"
 
-
-	if [ $# != "2" ]
+	if [ $# != "2" ] # Prints an error if there are more or less than 2 arguments
 	then
-		echo "Error 1" 1>&2
+		echo "Error, please enter only two arguments" 1>&2
 		return 1
-	elif [[ $# = "2" && ( ! -r $1 || ! -r $2 ) ]]
+	elif [[ $# = "2" && ( ! -r $1 || ! -r $2 ) ]] # Prints an error if either of the files are unreadable
 	then
-		echo "Error, file is unreadable" 1>&2
+		echo "Error, files are unreadable" 1>&2
 		return 1	
-	elif [ $rowsm1 -ne $rowsm2 ] || [ $colsm1 -ne $colsm2 ]
+	elif [ $rowsm1 -ne $rowsm2 ] || [ $colsm1 -ne $colsm2 ] # Prints an error if the matrix sizes are not equal
 	then
-		echo "Error, matrices are not the same size!" 1>&2
+		echo "Error, matrices are not the same size" 1>&2
 		return 1
 	else
 		numm1=0
 		numm2=0
 		sum=0
-		paste -d '\n' $1 $2 | while read f1 && read f2
+		paste -d '\n' $1 $2 | while read f1 && read f2 # Loop to iterate through rows of each matrices
 		do
-			#echo "f1: $f1"
-			#echo "f2: $f2"
-			for((i = 1; i <= $colsm1; i++))
+			for((i = 1; i <= $colsm1; i++)) # Loop to iterate through each element of the row
 			do
+				# Variable holds each individual element
 				numm1=$(echo "$f1" | cut -f $i)
-				#echo "numm1: $numm1"
 				numm2=$(echo "$f2" | cut -f $i)
-				#echo "numm2: $numm2"
-				sum=$(($numm1+$numm2))
-				if [ $i = $colsm1 ]
+
+				sum=$(($numm1+$numm2)) # Adds the two numbers together
+				if [ $i = $colsm1 ] # Print the last number of the row without a tab
 				then
 					printf "%d" $sum
 				else
@@ -206,52 +208,50 @@ add() {
 ##		    the result matrix to the terminal
 ###############################################################
 multiply() {
+	# Finds the row and column size of the first matrix
 	rowsm1=$(wc -l $1)
-	rowsm1=$(echo $rowsm1 | cut -f 1 -d " ")  # cut cuts the first field (-f 1) from a list of fields delimited by the string " " (-d)
-	#echo "This is m1 rows: $rowsm1"
+	rowsm1=$(echo $rowsm1 | cut -f 1 -d " ")
 
 	firstlinem1=$(head -n 1 $1)
 	colsm1=$(echo $firstlinem1 | wc -w )
-	#echo "This is m1 cols: $colsm1"
 
+	# Finds the row and column size of the second matrix
 	rowsm2=$(wc -l $2)
-	rowsm2=$(echo $rowsm2 | cut -f 1 -d " ")  # cut cuts the first field (-f 1) from a list of fields delimited by the string " " (-d)
-	#echo "This is m2 rows: $rowsm2"
-
+	rowsm2=$(echo $rowsm2 | cut -f 1 -d " ")
 
 	firstlinem2=$(head -n 1 $2)
 	colsm2=$(echo $firstlinem2 | wc -w )
-	#echo "This is m2 cols: $colsm1"
 
-	if [ $# != "2" ]
+	if [ $# != "2" ] # Prints an error if there are more or less than 2 arguments
 	then 
-		echo "Error 1" 1>&2
+		echo "Error, please enter only two arguments" 1>&2
 		return 1
-	elif [[ $# = "2" && ( ! -r $1 || ! -r $2 ) ]]
+	elif [[ $# = "2" && ( ! -r $1 || ! -r $2 ) ]] # Prints an error if either of the files are unreadable
 	then
-		echo "Error, file is unreadable" 1>&2
+		echo "Error, files are unreadable" 1>&2
 		return 1		 	
-	elif [ $colsm1 != $rowsm2 ]
+	elif [ $colsm1 != $rowsm2 ] # Prints an error if the column of matrix 1 doesn't equal to the row of matrix 2
 	then
-		echo "Error, the column of the first matrix is not equal to the row of the second matrix." 1>&2
+		echo "Error, column of matrix 1 doesn't equal to the row of matrix 2" 1>&2
 		return 1
 	else
-		transpose $2 > "tempfile3"
+		transpose $2 > "tempfile3" # Places the transposed matrix 2 into tempfile3.txt
+		
 		counter=0
-
-		while read -u 3 left
+		while read -u 3 left # Loop to iterate through each row of matrix 1
 		do	
-			while read -u 4 right
+			while read -u 4 right # Loop to iterate through each row of matrix 2
 			do
 				sum=0
-				for((k = 1; k <= $colsm1; k++))
+				for((k = 1; k <= $colsm1; k++)) # Loop to iterate through row elements of both matrices
 				do
+					# Variable stores the individual row element
 					m1val=$(echo "$left" | cut -f $k)
 					m2val=$(echo "$right" | cut -f $k)
 					sum=$(($sum+(m1val*m2val)))
 				done
 				counter=$(($counter+1))
-				if [ $counter = $colsm2 ]
+				if [ $counter = $colsm2 ] # Print the last element of the row without a tab
 				then
 					printf "%d" $sum
 				else
@@ -266,25 +266,25 @@ multiply() {
 
 
 datafilepath="datafile$$"
-if [ "$#" = "0" ]
+if [ "$#" = "0" ] # Prints an error if no functions are called
 then 
 	echo "Error, no arguments were passed" 1>&2
 	exit 1
-elif [ $1 = "add" ] || [ $1 = "multiply" ]
+elif [ $1 = "add" ] || [ $1 = "multiply" ] # If the first parameter of the matrix file is add or multiply
 then
-	if [ $# = "3" ]
+	if [ $# = "3" ] # Run the function if there are 3 arguments after calling the matrix file
 	then
 		$1 $2 $3
 	else
 		echo "Error" 1>&2
 		exit 1
 	fi
-elif [ $1 = "dims" ] || [ $1 = "transpose" ] || [ $1 = "mean" ]
+elif [ $1 = "dims" ] || [ $1 = "transpose" ] || [ $1 = "mean" ] # If the first parameter of the matrix file is dims, tranpose, or mean
 then
-	if [ $# = "2" ]
+	if [ $# = "2" ] # Run the function if there are 2 arguments after calling the matrix file
 	then
 		$1 $2
-	elif [ $# = "1" ]
+	elif [ $# = "1" ] # If there is only one argument, then take the matrix input through the keyboard
 	then
 		cat > "$datafilepath"
 		$1 "$datafilepath"
@@ -292,7 +292,7 @@ then
 		echo "Error" 1>&2
 		exit 1
 	fi
-else
+else # If the function doesn't exist in matrix, then print an error
 	echo "Error, function does not exist: $1" 1>&2
 	exit 1
 fi	
