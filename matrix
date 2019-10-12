@@ -1,24 +1,53 @@
+
+###############################################################
+## Program File: matrix
+## Author: Aeijan Bajracharya
+## Date: 10/11/19
+## Description: Contains functions for matrix manipulation and 
+##		arithmetic
+###############################################################
+
 #!/bin/bash -e
 
+###############################################################
+## Function: dims()
+## Description: Finds the row and column size of the matrix
+##		passed in or entered in through keyboard input
+## Parameters: .txt file of a matrix or user enters in a matrix
+##		through the keyboard
+## Pre-Conditions: Takes in a file or keyboard input
+## Post-Conditions: Prints the row and column size of the matrix
+###############################################################
 dims() {
-	if [ $# -gt "1" ]
+	if [ $# -gt "1" ] # Prints an error if there is more than 1 parameter
 	then
 		echo "Error" 1>&2
 		return 1
-	elif [ $# = "1" ] && [ ! -r $1 ]
+	elif [ $# = "1" ] && [ ! -r $1 ] # Prints an error if the passed in file is unreadable
 	then
 		echo "Error, file is unreadable" 1>&2
 		return 1
 	else
-		rows=$(wc -l $1)
-		firstline=$(head -n 1 $1)
-		cols=$(echo $firstline | wc -w ) # counts the number of words in the first line
-		rows=$(echo $rows | cut -f 1 -d " ")  # cut cuts the first field (-f 1) from a list of fields delimited by the string " " (-d)
+		firstline=$(head -n 1 $1) # Takes the first row of the matrix
+		cols=$(echo $firstline | wc -w ) # Counts the number of fields in the first row
+		rows=$(wc -l $1) # Returns the number of lines in the file
+		echo $rows
+		rows=$(echo $rows | cut -f 1 -d " ")  # cuts the first field (-f 1) from a list of fields delimited by the string " " (-d)
 		printf "$rows $cols\n"
 		return 0
 	fi		 		
 }
 
+###############################################################
+## Function: transpose()
+## Description: Transposes the matrix passed in or entered in 
+##		through keyboard input
+## Parameters: .txt file of a matrix or user enters in a matrix
+##		through the keyboard
+## Pre-Conditions: Takes in a matrix through a file or keyboard 
+#		   input
+## Post-Conditions: Prints the transposed matrix to the terminal
+###############################################################
 transpose() { 
 	firstline=$(head -n 1 $1)
 	cols=$(echo $firstline | wc -w )
@@ -52,6 +81,15 @@ transpose() {
 	fi
 }
 
+###############################################################
+## Function: mean()
+## Description: Find the average of each column of a matrix
+## Parameters: .txt file of a matrix or user enters in a matrix
+##		through the keyboard
+## Pre-Conditions: Takes in a matrix through a file or keyboard 
+#		   input
+## Post-Conditions: Prints the averages to the terminal
+###############################################################
 mean() {
 	rows=$(wc -l $1)
 	rows=$(echo $rows | cut -f 1 -d " ")  # cut cuts the first field (-f 1) from a list of fields delimited by the string " " (-d)
@@ -89,6 +127,14 @@ mean() {
 	fi
 }
 
+###############################################################
+## Function: add()
+## Description: Adds two matrices together
+## Parameters: Two .txt files of matrices
+## Pre-Conditions: Takes in two matrices through two files
+## Post-Conditions: Adds the two matrices together and prints
+##		    the result matrix to the terminal
+###############################################################
 add() {
 	rowsm1=$(wc -l $1)
 	rowsm1=$(echo $rowsm1 | cut -f 1 -d " ")  # cut cuts the first field (-f 1) from a list of fields delimited by the string " " (-d)
@@ -151,6 +197,14 @@ add() {
 	fi
 }
 
+###############################################################
+## Function: multiply()
+## Description: Multiplies two matrices together
+## Parameters: Two .txt files of matrices
+## Pre-Conditions: Takes in two matrices through two files
+## Post-Conditions: Multiplies the two matrices together and prints
+##		    the result matrix to the terminal
+###############################################################
 multiply() {
 	rowsm1=$(wc -l $1)
 	rowsm1=$(echo $rowsm1 | cut -f 1 -d " ")  # cut cuts the first field (-f 1) from a list of fields delimited by the string " " (-d)
@@ -181,80 +235,22 @@ multiply() {
 	then
 		echo "Error, the column of the first matrix is not equal to the row of the second matrix." 1>&2
 		return 1
-	else 
-		#This code works but it's too slow for the grading script
-		############################################################
-		#numm1=0
-		#numm2=0
-		#multiply=0
-		#sum=0
-		counter=0
+	else
 		transpose $2 > "tempfile3"
-
-		#while read -u 3 left
-		#do
-		#	while read -u 4 right
-		#	do
-		#		for((i = 1; i <= $colsm1; i++))
-		#		do
-		#			m1val=$(echo "$left" | cut -f $i)
-		#			for((j = 1; j <= $colsm1; j++))
-		#			do
-		#				m2val=$(echo "$right" | cut -f $j)
-		#				if [ $i = $j ]
-		#				then
-		#					multiply=$(($m1val*$m2val))	
-		#				fi
-		#			done	
-		#			sum=$(($sum+$multiply))
-		#		done
-		#		counter=$((counter+1))
-		#		if [ $counter = $colsm2 ]
-		#		then
-		#			printf "%d" $sum
-		#		else
-		#			printf "%d\t" $sum
-		#		fi
-		#		multiply=0
-		#		sum=0
-		#	done 4<"tempfile3"
-		#	printf "\n"
-		#	counter=0
-		#done 3<"$1"
-		############################################################
-
-		#sixe of new matrix should be rowsm1 x colsm2
-		#for((i = 1; i <= $rowsm1; i++))
-		#do
-		#	for((j = 1; j <= $colsm2; j++))
-		#	do
-		#		sum=0
-		#		for((k = 1; k <= $colsm1; k++))
-		#		do
-		#			echo "hello"
-		#		done
-		#	done
-		#	printf "d" $sum
-		#done
-
 		counter=0
+
 		while read -u 3 left
 		do	
-			#echo "hello"
 			while read -u 4 right
 			do
-				#echo "hello2"
 				sum=0
 				for((k = 1; k <= $colsm1; k++))
 				do
 					m1val=$(echo "$left" | cut -f $k)
-					#echo "m1val: $m1val"
 					m2val=$(echo "$right" | cut -f $k)
-					#echo "m2val: $m2val"
 					sum=$(($sum+(m1val*m2val)))
 				done
 				counter=$(($counter+1))
-				#echo "counter: $counter"
 				if [ $counter = $colsm2 ]
 				then
 					printf "%d" $sum
